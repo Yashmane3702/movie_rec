@@ -1,5 +1,6 @@
 import os
 import pickle
+from difflib import get_close_matches
 from typing import Optional, List, Dict, Any, Tuple
 
 import numpy as np
@@ -436,15 +437,46 @@ async def search_bundle(
     tfidf_items: List[TFIDFRecItem] = []
 
     recs: List[Tuple[str, float]] = []
+
     try:
-        # try local dataset by TMDB title
         recs = tfidf_recommend_titles(details.title, top_n=tfidf_top_n)
+
     except Exception:
-        # fallback to user query
         try:
             recs = tfidf_recommend_titles(query, top_n=tfidf_top_n)
+
         except Exception:
-            recs = []
+            titles = df["title"].astype(str).tolist()
+
+            matches = get_close_matches(
+                details.title,
+                titles,
+                n=1,
+                cutoff=0.3,
+            )
+
+            if not matches:
+                base_title = re.sub(r"\s*\d+$", "", details.title).strip()
+                if base_title != details.title:
+                    matches = get_close_matches(
+                        base_title,
+                        titles,
+                        n=1,
+                        cutoff=0.3,
+                    )
+
+            if not matches:
+                first_word = details.title.split()[0].lower()
+                for t in titles:
+                    if first_word in t.lower():
+                        matches = [t]
+                        break
+
+            if matches:
+                print(f"Using fallback title: {matches[0]}")
+                recs = tfidf_recommend_titles(matches[0], top_n=tfidf_top_n)
+            else:
+                recs = []
 
     for title, score in recs:
         card = await attach_tmdb_card_by_title(title)
