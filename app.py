@@ -344,21 +344,12 @@ elif st.session_state.view == "details":
             params={"query": title, "tfidf_top_n": 12, "genre_limit": 12},
             
         )
-        st.write("Movie title:", title)
-        st.write("API Error:", err2)
-        st.write(bundle)
+        
 
         if not err2 and bundle:
             st.markdown("#### 🔎 Similar Movies (TF-IDF)")
-
-            tfidf_cards = to_cards_from_tfidf_items(bundle.get("tfidf_recommendations"))
-
-            st.write("TF-IDF items:", len(bundle.get("tfidf_recommendations", [])))
-            st.write("Converted cards:", len(tfidf_cards))
-            st.write(tfidf_cards[:3])
-
             poster_grid(
-                tfidf_cards,
+                to_cards_from_tfidf_items(bundle.get("tfidf_recommendations")),
                 cols=grid_cols,
                 key_prefix="details_tfidf",
             )
