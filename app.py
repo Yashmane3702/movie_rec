@@ -346,8 +346,15 @@ elif st.session_state.view == "details":
 
         if not err2 and bundle:
             st.markdown("#### 🔎 Similar Movies (TF-IDF)")
+
+            tfidf_cards = to_cards_from_tfidf_items(bundle.get("tfidf_recommendations"))
+
+            st.write("TF-IDF items:", len(bundle.get("tfidf_recommendations", [])))
+            st.write("Converted cards:", len(tfidf_cards))
+            st.write(tfidf_cards[:3])
+
             poster_grid(
-                to_cards_from_tfidf_items(bundle.get("tfidf_recommendations")),
+                tfidf_cards,
                 cols=grid_cols,
                 key_prefix="details_tfidf",
             )
