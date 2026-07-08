@@ -342,7 +342,11 @@ elif st.session_state.view == "details":
         bundle, err2 = api_get_json(
             "/movie/search",
             params={"query": title, "tfidf_top_n": 12, "genre_limit": 12},
+            
         )
+        st.write("Movie title:", title)
+        st.write("API Error:", err2)
+        st.write(bundle)
 
         if not err2 and bundle:
             st.markdown("#### 🔎 Similar Movies (TF-IDF)")
