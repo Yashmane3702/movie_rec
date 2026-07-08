@@ -4,7 +4,7 @@ import streamlit as st
 # =============================
 # CONFIG
 # =============================
-API_BASE = "https://movie-rec-466x.onrender.com" or "http://127.0.0.1:8000"
+API_BASE = "https://movie-rec-466x.onrender.com"
 TMDB_IMG = "https://image.tmdb.org/t/p/w500"
 
 st.set_page_config(page_title="Movie Recommender", page_icon="🎬", layout="wide")
@@ -110,16 +110,15 @@ def poster_grid(cards, cols=6, key_prefix="grid"):
 
 def to_cards_from_tfidf_items(tfidf_items):
     cards = []
-    for x in tfidf_items or []:
+    for x in (tfidf_items or []):
         tmdb = x.get("tmdb") or {}
-        if tmdb.get("tmdb_id"):
-            cards.append(
-                {
-                    "tmdb_id": tmdb["tmdb_id"],
-                    "title": tmdb.get("title") or x.get("title") or "Untitled",
-                    "poster_url": tmdb.get("poster_url"),
-                }
-            )
+        cards.append(
+            {
+                "tmdb_id": tmdb.get("tmdb_id"),
+                "title": tmdb.get("title") or x.get("title") or "Untitled",
+                "poster_url": tmdb.get("poster_url"),
+            }
+        )
     return cards
 
 
